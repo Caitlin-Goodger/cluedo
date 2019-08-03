@@ -16,12 +16,14 @@ public class Cell
   private Room room;
   private boolean isOccupied;
   private String occupier;
+  private int x;
+  private int y;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Cell(Room aRoom, boolean aIsOccupied, String aOccupier)
+  public Cell(Room aRoom, boolean aIsOccupied, String aOccupier, int x, int y)
   {
     room = aRoom;
     isOccupied = aIsOccupied;

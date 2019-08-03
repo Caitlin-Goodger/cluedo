@@ -15,7 +15,7 @@ public class Board
 
   //Board Associations
   private List<Room> rooms;
-  private List<Cell> cells;
+  private Cell cells[][];
 
   //------------------------
   // CONSTRUCTOR
@@ -24,7 +24,7 @@ public class Board
   public Board()
   {
     rooms = new ArrayList<Room>();
-    cells = new ArrayList<Cell>();
+    cells = new Cell[24][25];
   }
 
   //------------------------
@@ -60,36 +60,36 @@ public class Board
     int index = rooms.indexOf(aRoom);
     return index;
   }
-  /* Code from template association_GetMany */
-  public Cell getCell(int index)
-  {
-    Cell aCell = cells.get(index);
-    return aCell;
-  }
+//  /* Code from template association_GetMany */
+//  public Cell getCell(int index)
+//  {
+//    Cell aCell = cells.get(index);
+//    return aCell;
+//  }
 
-  public List<Cell> getCells()
-  {
-    List<Cell> newCells = Collections.unmodifiableList(cells);
-    return newCells;
-  }
-
-  public int numberOfCells()
-  {
-    int number = cells.size();
-    return number;
-  }
-
-  public boolean hasCells()
-  {
-    boolean has = cells.size() > 0;
-    return has;
-  }
-
-  public int indexOfCell(Cell aCell)
-  {
-    int index = cells.indexOf(aCell);
-    return index;
-  }
+//  public List<Cell> getCells()
+//  {
+//    List<Cell> newCells = Collections.unmodifiableList(cells);
+//    return newCells;
+//  }
+//
+//  public int numberOfCells()
+//  {
+//    int number = cells.size();
+//    return number;
+//  }
+//
+//  public boolean hasCells()
+//  {
+//    boolean has = cells.size() > 0;
+//    return has;
+//  }
+//
+//  public int indexOfCell(Cell aCell)
+//  {
+//    int index = cells.indexOf(aCell);
+//    return index;
+//  }
   /* Code from template association_MinimumNumberOfMethod */
   public static int minimumNumberOfRooms()
   {
@@ -153,62 +153,60 @@ public class Board
     return 0;
   }
   /* Code from template association_AddUnidirectionalMany */
-  public boolean addCell(Cell aCell)
+  public boolean addCell(Cell aCell, int x, int y)
   {
     boolean wasAdded = false;
-    if (cells.contains(aCell)) { return false; }
-    cells.add(aCell);
-    wasAdded = true;
+    cells[x][y] = aCell;
     return wasAdded;
   }
-
-  public boolean removeCell(Cell aCell)
-  {
-    boolean wasRemoved = false;
-    if (cells.contains(aCell))
-    {
-      cells.remove(aCell);
-      wasRemoved = true;
-    }
-    return wasRemoved;
-  }
-  /* Code from template association_AddIndexControlFunctions */
-  public boolean addCellAt(Cell aCell, int index)
-  {  
-    boolean wasAdded = false;
-    if(addCell(aCell))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfCells()) { index = numberOfCells() - 1; }
-      cells.remove(aCell);
-      cells.add(index, aCell);
-      wasAdded = true;
-    }
-    return wasAdded;
-  }
-
-  public boolean addOrMoveCellAt(Cell aCell, int index)
-  {
-    boolean wasAdded = false;
-    if(cells.contains(aCell))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfCells()) { index = numberOfCells() - 1; }
-      cells.remove(aCell);
-      cells.add(index, aCell);
-      wasAdded = true;
-    } 
-    else 
-    {
-      wasAdded = addCellAt(aCell, index);
-    }
-    return wasAdded;
-  }
+//
+//  public boolean removeCell(Cell aCell)
+//  {
+//    boolean wasRemoved = false;
+//    if (cells.contains(aCell))
+//    {
+//      cells.remove(aCell);
+//      wasRemoved = true;
+//    }
+//    return wasRemoved;
+//  }
+//  /* Code from template association_AddIndexControlFunctions */
+//  public boolean addCellAt(Cell aCell, int index)
+//  {  
+//    boolean wasAdded = false;
+//    if(addCell(aCell))
+//    {
+//      if(index < 0 ) { index = 0; }
+//      if(index > numberOfCells()) { index = numberOfCells() - 1; }
+//      cells.remove(aCell);
+//      cells.add(index, aCell);
+//      wasAdded = true;
+//    }
+//    return wasAdded;
+//  }
+//
+//  public boolean addOrMoveCellAt(Cell aCell, int index)
+//  {
+//    boolean wasAdded = false;
+//    if(cells.contains(aCell))
+//    {
+//      if(index < 0 ) { index = 0; }
+//      if(index > numberOfCells()) { index = numberOfCells() - 1; }
+//      cells.remove(aCell);
+//      cells.add(index, aCell);
+//      wasAdded = true;
+//    } 
+//    else 
+//    {
+//      wasAdded = addCellAt(aCell, index);
+//    }
+//    return wasAdded;
+//  }
 
   public void delete()
   {
     rooms.clear();
-    cells.clear();
+    //cells.clear();
   }
 
   // line 37 "model.ump"

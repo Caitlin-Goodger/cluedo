@@ -17,13 +17,15 @@ public class Room
   //Room Attributes
   private List<Player> inRoom;
   private List<String> weapons;
+  private String name;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Room(List<Player> aInRoom, List<String> aWeapons)
+  public Room(String aName,List<Player> aInRoom, List<String> aWeapons)
   {
+	name = aName;
     inRoom = aInRoom;
     weapons = aWeapons;
   }
