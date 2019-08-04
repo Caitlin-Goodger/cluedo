@@ -7,3 +7,6 @@ Assignment info: https://docs.google.com/document/d/1g7GzhEvfSRJknQUmJ-xhg_cwMSr
 
 
 CRC Cards doc: https://docs.google.com/document/d/139jAOB35Nn7jmYv1eyfUvwRYwkhoWUWGBBFxEgHIc9Y/edit?usp=sharing
+
+
+I've made a start on CRC cards - will revise when the code is further along. I'm not sure if they're right, but I hope they're a good start at least. Feel absolutely free to make any changes/corrections! Have put up a pdf just in case, so we have at least a version to go off. 
