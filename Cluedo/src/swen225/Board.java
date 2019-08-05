@@ -39,36 +39,62 @@ public class Board
     return aRoom;
   }
 
+  /**
+   * Get the list of rooms
+   * @return
+   */
   public List<Room> getRooms()
   {
     List<Room> newRooms = Collections.unmodifiableList(rooms);
     return newRooms;
   }
 
+  /**
+   * Get the number of rooms
+   * @return
+   */
   public int numberOfRooms()
   {
     int number = rooms.size();
     return number;
   }
 
+  /**
+   * Checks that there is at least one room
+   * @return
+   */
   public boolean hasRooms()
   {
     boolean has = rooms.size() > 0;
     return has;
   }
 
+  /**
+   * Get the index of a room
+   * @param aRoom
+   * @return
+   */
   public int indexOfRoom(Room aRoom)
   {
     int index = rooms.indexOf(aRoom);
     return index;
   }
-//  /* Code from template association_GetMany */
+
+  /**
+   * Get a cell at an x and y value
+   * @param x
+   * @param y
+   * @return
+   */
   public Cell getCell(int x,int y)
   {
     Cell aCell = cells[x][y];
     return aCell;
   }
   
+  /**
+   * Print the board. Used for testing to check that all the cells were there
+   */
   public void printBoard() {
 	  for(int i =0;i<24;i++) {
 		  for(int j =0;j<25;j++) {
@@ -77,35 +103,12 @@ public class Board
 	  }
   }
 
-//  public List<Cell> getCells()
-//  {
-//    List<Cell> newCells = Collections.unmodifiableList(cells);
-//    return newCells;
-//  }
-//
-//  public int numberOfCells()
-//  {
-//    int number = cells.size();
-//    return number;
-//  }
-//
-//  public boolean hasCells()
-//  {
-//    boolean has = cells.size() > 0;
-//    return has;
-//  }
-//
-//  public int indexOfCell(Cell aCell)
-//  {
-//    int index = cells.indexOf(aCell);
-//    return index;
-//  }
-  /* Code from template association_MinimumNumberOfMethod */
-  public static int minimumNumberOfRooms()
-  {
-    return 0;
-  }
-  /* Code from template association_AddUnidirectionalMany */
+
+  /**
+   * Add a room
+   * @param aRoom
+   * @return
+   */
   public boolean addRoom(Room aRoom)
   {
     boolean wasAdded = false;
@@ -115,6 +118,11 @@ public class Board
     return wasAdded;
   }
 
+  /**
+   * Remove a room
+   * @param aRoom
+   * @return
+   */
   public boolean removeRoom(Room aRoom)
   {
     boolean wasRemoved = false;
@@ -126,6 +134,12 @@ public class Board
     return wasRemoved;
   }
   /* Code from template association_AddIndexControlFunctions */
+  /**
+   * Add a room at an index
+   * @param aRoom
+   * @param index
+   * @return
+   */
   public boolean addRoomAt(Room aRoom, int index)
   {  
     boolean wasAdded = false;
@@ -140,6 +154,12 @@ public class Board
     return wasAdded;
   }
 
+  /**
+   * Add or move a room at an index
+   * @param aRoom
+   * @param index
+   * @return
+   */
   public boolean addOrMoveRoomAt(Room aRoom, int index)
   {
     boolean wasAdded = false;
@@ -169,59 +189,31 @@ public class Board
     cells[x][y] = aCell;
     return wasAdded;
   }
-//
-//  public boolean removeCell(Cell aCell)
-//  {
-//    boolean wasRemoved = false;
-//    if (cells.contains(aCell))
-//    {
-//      cells.remove(aCell);
-//      wasRemoved = true;
-//    }
-//    return wasRemoved;
-//  }
-//  /* Code from template association_AddIndexControlFunctions */
-//  public boolean addCellAt(Cell aCell, int index)
-//  {  
-//    boolean wasAdded = false;
-//    if(addCell(aCell))
-//    {
-//      if(index < 0 ) { index = 0; }
-//      if(index > numberOfCells()) { index = numberOfCells() - 1; }
-//      cells.remove(aCell);
-//      cells.add(index, aCell);
-//      wasAdded = true;
-//    }
-//    return wasAdded;
-//  }
-//
-//  public boolean addOrMoveCellAt(Cell aCell, int index)
-//  {
-//    boolean wasAdded = false;
-//    if(cells.contains(aCell))
-//    {
-//      if(index < 0 ) { index = 0; }
-//      if(index > numberOfCells()) { index = numberOfCells() - 1; }
-//      cells.remove(aCell);
-//      cells.add(index, aCell);
-//      wasAdded = true;
-//    } 
-//    else 
-//    {
-//      wasAdded = addCellAt(aCell, index);
-//    }
-//    return wasAdded;
-//  }
 
+  /**
+   * Delete the board information
+   */
   public void delete()
   {
     rooms.clear();
-    //cells.clear();
+    cells = new Cell[24][25];
   }
 
   // line 37 "model.ump"
-   public void draw(){
-    
-  }
+  /**
+   * Draw the board
+   */
+  public void draw(){
+	  String line = "";
+	  for (int i = 0; i < 25; i++) {
+		  for (int y = 0; y < 24; y++) {
+			  line += ("|" + cells[y][i].toString());
+		  }
+		  line += "|";
+		  System.out.println(line);
+		  line = "";
+	  }
+	   
+	  }
 
 }

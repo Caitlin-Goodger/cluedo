@@ -14,13 +14,15 @@ public class WeaponCard implements Card
   // MEMBER VARIABLES
   //------------------------
 		String name;
+		String initial;
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public WeaponCard(String name)
+  public WeaponCard(String name, String i)
   {
 	  this.name = name;
+	  this.initial = i;
   }
 
   //------------------------
@@ -30,6 +32,9 @@ public class WeaponCard implements Card
   public void delete()
   {}
   
+  /**
+   * Get the name of the card
+   */
   public String getName() {
 	  return name;
   }

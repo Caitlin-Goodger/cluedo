@@ -30,6 +30,9 @@ public class CharacterCard implements Card
   public void delete()
   {}
   
+  /**
+   * Get the name of the card
+   */
   public String getName() {
 	  return name;
   }

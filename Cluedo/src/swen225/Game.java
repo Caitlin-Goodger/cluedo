@@ -57,22 +57,25 @@ public class Game
 		  Game g = new Game();
 	  }
 	  
+	  /**
+	   * Create a list of strings for all the cards
+	   */
 	  public void createLists() {
 		  playersNames = new ArrayList();
 		  weaponNames = new ArrayList();
 		  roomsNames = new ArrayList();
-		  playersNames.add("ms");
-		  playersNames.add("cm");
-		  playersNames.add("mw");
-		  playersNames.add("mg");
-		  playersNames.add("mp");
-		  playersNames.add("pp");
-		  weaponNames.add("c");
-		  weaponNames.add("d");
-		  weaponNames.add("p");
-		  weaponNames.add("g");
-		  weaponNames.add("r");
-		  weaponNames.add("s");
+		  playersNames.add("scarlett");
+		  playersNames.add("mustard");
+		  playersNames.add("white");
+		  playersNames.add("green");
+		  playersNames.add("peacock");
+		  playersNames.add("plum");
+		  weaponNames.add("candlestick");
+		  weaponNames.add("dagger");
+		  weaponNames.add("pipe");
+		  weaponNames.add("revolver");
+		  weaponNames.add("rope");
+		  weaponNames.add("spanner");
 		  roomsNames.add("kitchen");
 		  roomsNames.add("ballroom");
 		  roomsNames.add("conservatory");
@@ -84,45 +87,58 @@ public class Game
 		  roomsNames.add("dining");
 	  }
 	  
+	  /**
+	   * Rotate through the players to keep taking turns
+	   */
 	  public void playTheGame() {
-		  int count = 1;
+		  int count = 0;
 		  int i =0;
 		  while(!won) {
 			  Player p = players.get(count);
 			  if(!p.isLost()) { 
-			  System.out.println("Player " + count + " turn");
-			  int roll = rollDice();
-			  System.out.println("You rolled a " + roll);
-			  p.move(roll,board, new ArrayList<Cell>());
-			  if(p.getRoom() != null) {
-				  InputStreamReader in = new InputStreamReader(System.in);
-				  Scanner scan = new Scanner(in);
-					  List<String> options = new ArrayList();
-					  options.add("suggest");
-					  options.add("accuse");
-					  options.add("neither");
-					  System.out.println("Do you want to suggest, accuse or neither");
-					  String choice = scan.next();
-					  if(!options.contains(choice)) {
-						  System.out.println("Do you want to suggest, accuse or neither");
-						  choice = scan.next();
+				  System.out.println("Player " + p.getName() + " turn");
+				  int roll = rollDice();
+				  System.out.println("You rolled a " + roll);
+				  //p.move(roll,board, new ArrayList<Cell>());
+				  ArrayList<Cell> visited = new ArrayList();
+				  for(int j =0;j<roll;j++) {
+					  Room old = p.getRoom();
+					  p.move(board, visited);
+					  if(p.getRoom() != null && p.getRoom().getName()!=null && old !=p.getRoom()) {
+						  InputStreamReader in = new InputStreamReader(System.in);
+						  Scanner scan = new Scanner(in);
+							  List<String> options = new ArrayList();
+							  options.add("suggest");
+							  options.add("accuse");
+							  options.add("neither");
+							  System.out.println("Do you want to suggest, accuse or neither");
+							  String choice = scan.next();
+							  if(!options.contains(choice)) {
+								  System.out.println("Do you want to suggest, accuse or neither");
+								  choice = scan.next();
+							  }
+							  if(choice.contentEquals("suggest")) {
+								  List<String> suggestions = p.suggest(roomsNames, playersNames, weaponNames);
+								  refuteSuggestion(suggestions,p);
+							  } else if (choice.contentEquals("accuse")) {
+								  List<String> accuse = p.accuse(roomsNames, playersNames, weaponNames);
+								  refuteAccuse(accuse,p);
+							  }
+						  }
 					  }
-					  if(choice.contentEquals("suggest")) {
-						  List<String> suggestions = p.suggest(roomsNames, playersNames, weaponNames);
-						  refuteSuggestion(suggestions,p);
-					  } else if (choice.contentEquals("accuse")) {
-						  List<String> accuse = p.accuse(roomsNames, playersNames, weaponNames);
-						  refuteAccuse(accuse,p);
-					  }
-				  }
 			  }
 			  count++;
-			  if(count>numPlayers) {
+			  if(count>=numPlayers) {
 				  count = 0;
 			  }
 		  }
 	  }
 	  
+	  /**
+	   * For each player refute a suggestion by showing cards that refute it
+	   * @param suggestions
+	   * @param p
+	   */
 	  public void refuteSuggestion(List<String> suggestions, Player p) {
 		  String player = "";
 		  String room = "";
@@ -139,6 +155,9 @@ public class Game
 				  weapon = value;
 			  }
 		  }
+		  System.out.println("PlayerS " + player);
+		  System.out.println("Room " + room);
+		  System.out.println("Weapon " + weapon);
 		  Room r = null;
 		  for(int i =0;i<rooms.size();i++) {
 			  Room r1 = rooms.get(i);
@@ -155,15 +174,16 @@ public class Game
 				  break;
 			  }
 		  }
-		  if(r.getInRoom().contains(suggest)) {
+		  System.out.println("Player " + suggest);
+		  if(!r.getInRoom().contains(suggest)) {
 			  movePlayerToRoom(r,suggest);
 		  }
-		  if(r.getWeapons().contains(weapon)) {
+		  if(!r.getWeapons().contains(weapon)) {
 			  r.removeWeapon(weapon);
 			  moveWeaponToRoom(r,weapon);
 		  }
 		  List<String> refuteCards = new ArrayList();
-		  for(int i =1; i<=players.size();i++) {
+		  for(int i =0; i<players.size();i++) {
 			  Player p1 = players.get(i);
 			  if(p1 != p) {
 				  List<String> refute = p1.refute(suggestions);
@@ -191,9 +211,14 @@ public class Game
 		  System.out.println(refuteCards);
 	  }
 	  
+	  /**
+	   * Move a player to a room
+	   * @param r
+	   * @param p
+	   */
 	  public void movePlayerToRoom(Room r, Player p) {
-		  for(int i =0;i<23;i++) {
-			  for(int j =0;j<24;j++) {
+		  for(int i =0;i<24;i++) {
+			  for(int j =0;j<25;j++) {
 				  Cell c = board.getCell(i, j);
 				  if(c.getRoom() == r && c.getAccessable() && !c.isIsOccupied()) {
 					  p.setCurrent(c);
@@ -203,19 +228,45 @@ public class Game
 		  }
 	  }
 	  
+	  /**
+	   * Move a weapon to a room
+	   * @param r
+	   * @param weapon
+	   */
 	  public void moveWeaponToRoom(Room r, String weapon) {
-		  for(int i =0;i<23;i++) {
-			  for(int j =0;j<24;j++) {
+		  for(int i = 0;i<rooms.size();i++) {
+			  Room r1 = rooms.get(i);
+			  if(r1.getWeapons().contains(weapon)) {
+				  r1.removeWeapon(weapon);
+			  }
+		  }
+		  boolean empty = false;
+		  for(int i =0;i<24;i++) {
+			  for(int j =0;j<25;j++) {
 				  Cell c = board.getCell(i, j);
 				  if(c.getRoom() == r && c.getAccessable() && !c.isIsOccupied()) {
-					  r.addToWeapon(weapon);
-					  c.setIsOccupied(true);
-					  c.setOccupier(weapon);
+					  if(!empty) {
+						  r.addToWeapon(weapon);
+						  c.setIsOccupied(true);
+						  c.setOccupier(weapon);
+						  empty = true;
+					  }
+					  if(c.getOccupier().equals(weapon)) {
+						  c.setIsOccupied(false);
+						  c.setOccupier(null);
+					  }
 					  return;
 				  }
 			  }
 		  }
 	  }
+	  
+	  /**
+	   * See if the accusation matches the murders, room and weapon.
+	   * If it doesn't then that player has lost
+	   * @param accuse
+	   * @param p
+	   */
 		public void refuteAccuse(List<String> accuse, Player p) {
 			for(int i =0;i<accuse.size();i++) {
 				String name = accuse.get(i);
@@ -229,6 +280,10 @@ public class Game
 			won = true;
 		}
   
+		/**
+		 * Set up the players 
+		 * Get number of players from the user and then then each player picks a name
+		 */
 	  public void setUpPlayers() {
 		  InputStreamReader in = new InputStreamReader(System.in);
 		  Scanner scan = new Scanner(in);
@@ -248,13 +303,20 @@ public class Game
 		  }
 		  numPlayers = number;
 		  List<String> chars = new ArrayList();
-		  chars.add("ms");
-		  chars.add("cm");
-		  chars.add("mw");
-		  chars.add("mg");
-		  chars.add("mp");
-		  chars.add("pp");
-		  for(int i = 1;i<= numPlayers;i++) {
+		  chars.add("scarlett");
+		  chars.add("mustard");
+		  chars.add("white");
+		  chars.add("green");
+		  chars.add("peacock");
+		  chars.add("plum");
+		  Map<String,String> initials = new HashMap();
+		  initials.put("scarlett", "ms");
+		  initials.put("mustard", "cm");
+		  initials.put("white", "mw");
+		  initials.put("green", "mg");
+		  initials.put("peacock", "mp");
+		  initials.put("plum", "pp");
+		  for(int i = 0;i< numPlayers;i++) {
 			  System.out.println(chars);
 			  System.out.println("Player " + i + " please pick the player from the list");
 			  String name = scan.next();
@@ -262,28 +324,31 @@ public class Game
 				  System.out.println("Player " + i + " please pick the player from the list");
 				  name = scan.next();
 			  }
-			  Player p = new Player(name,new ArrayList<Card>(),false,null,null);
+			  Player p = new Player(name,new ArrayList<Card>(),false,null,null,initials.get(name));
 			  players.add(p);
 			  chars.remove(name);
 		  }
 		  divideCards();
 		  for(int i = 0; i<chars.size();i++) {
 			  String n = chars.get(i);
-			  Player p = new Player(n,new ArrayList<Card>(),true,null,null);
+			  Player p = new Player(n,new ArrayList<Card>(),true,null,null,initials.get(n));
 			  players.add(p);
 		  }
 		  movePlayersToStart();
 		  moveWeapons();
 	  }
 	  
+	  /**
+	   * Move the weapons to a starting room so there is only one weapon per room
+	   */
 	  public void moveWeapons() {
 		  List<String> weap = new ArrayList();
-		  weap.add("c");
-		  weap.add("d");
-		  weap.add("p");
-		  weap.add("g");
-		  weap.add("r");
-		  weap.add("s");
+		  weap.add("candlestick");
+		  weap.add("dagger");
+		  weap.add("pipe");
+		  weap.add("gun");
+		  weap.add("rope");
+		  weap.add("spanner");
 		  for(int i =0;i<6;i++) {
 			  String weapon = weap.get(i);
 			  int num = (int) (Math.random() * ((8) +1));
@@ -292,18 +357,21 @@ public class Game
 				  num = (int) (Math.random() * ((8) +1));
 				  r = rooms.get(num);
 			  }
-			  r.addToWeapon(weapon);
+			  moveWeaponToRoom(r,weapon);
 		  }
 	  }
 	  
+	  /**
+	   * Move the players to their start positions
+	   */
 	  public void movePlayersToStart() {
 		  Map<String,Cell> starting = new HashMap();
-		  starting.put("mw",board.getCell(9, 0));
-		  starting.put("mg",board.getCell(14, 0));
-		  starting.put("mp",board.getCell(23, 6));
-		  starting.put("pp",board.getCell(23, 19));
-		  starting.put("ms",board.getCell(7, 24));
-		  starting.put("cm",board.getCell(0, 17));
+		  starting.put("white",board.getCell(9, 0));
+		  starting.put("green",board.getCell(14, 0));
+		  starting.put("peacock",board.getCell(23, 6));
+		  starting.put("plum",board.getCell(23, 19));
+		  starting.put("scarlett",board.getCell(7, 24));
+		  starting.put("mustard",board.getCell(0, 17));
 		  for(int i =0;i<players.size();i++) {
 			  Player p = players.get(i);
 			  Cell c = starting.get(p.getName());
@@ -311,6 +379,9 @@ public class Game
 		  }
 	  }
 	  
+	  /**
+	   * Divide all the cards up among the players
+	   */
 	  public void divideCards() {
 		  Collections.shuffle(cards);
 		  int count =0;
@@ -325,14 +396,17 @@ public class Game
 		  }
 	  }
 	  
+	  /**
+	   * Set up all the character cards
+	   */
 	  public void setUpCharacterCards() {
 		  ArrayList<CharacterCard> card = new ArrayList();
-		  CharacterCard scarlett = new CharacterCard("ms");
-		  CharacterCard mustard = new CharacterCard("cm");
-		  CharacterCard white = new CharacterCard("mw");
-		  CharacterCard green = new CharacterCard("mg");
-		  CharacterCard peacock = new CharacterCard("mp");
-		  CharacterCard plum = new CharacterCard("pp");
+		  CharacterCard scarlett = new CharacterCard("scarlett");
+		  CharacterCard mustard = new CharacterCard("mustard");
+		  CharacterCard white = new CharacterCard("white");
+		  CharacterCard green = new CharacterCard("green");
+		  CharacterCard peacock = new CharacterCard("peacock");
+		  CharacterCard plum = new CharacterCard("plum");
 		  card.add(scarlett);
 		  card.add(mustard);
 		  card.add(white);
@@ -345,6 +419,9 @@ public class Game
 		  cards.addAll(card);
 	  }
   
+	  /**
+	   * Set up all the room cards
+	   */
 	public void setUpRoomCards() {
 		ArrayList<RoomCard> card = new ArrayList();
 		RoomCard kitchen = new RoomCard("kitchen");
@@ -371,14 +448,17 @@ public class Game
 		cards.addAll(card);
 	  }
 	
+	/**
+	 * Set up the weapon cards
+	 */
 	public void setUpWeaponCards() {
 		 ArrayList<WeaponCard> card = new ArrayList();
-		 WeaponCard candle = new WeaponCard("c");
-		 WeaponCard dagger = new WeaponCard("d");
-		 WeaponCard pipe = new WeaponCard("p");
-		 WeaponCard gun = new WeaponCard("g");
-		 WeaponCard rope = new WeaponCard("r");
-		 WeaponCard spanner = new WeaponCard("s");
+		 WeaponCard candle = new WeaponCard("candlestick","c");
+		 WeaponCard dagger = new WeaponCard("dagger","d");
+		 WeaponCard pipe = new WeaponCard("pipe","p");
+		 WeaponCard gun = new WeaponCard("gun","g");
+		 WeaponCard rope = new WeaponCard("rope","r");
+		 WeaponCard spanner = new WeaponCard("spanner","s");
 		 card.add(candle);
 		 card.add(dagger);
 		 card.add(pipe);
@@ -391,6 +471,9 @@ public class Game
 		 cards.addAll(card);
 	}
   
+	/**
+	 * Set up all the rooms
+	 */
   public void setUpRooms() {
 	  Room kitchen = new Room("kitchen", new ArrayList<Player>(),new ArrayList<String>());
 	  Room ballroom = new Room("ballroom",new ArrayList<Player>(),new ArrayList<String>());
@@ -414,6 +497,9 @@ public class Game
 	  rooms.add(none);
   }
   
+  /**
+   * Set up the board by reading the cell information from file
+   */
   public void setUpBoard() {
 	  board = new Board();
 	  try {
@@ -449,66 +535,114 @@ public class Game
   // INTERFACE
   //------------------------
   /* Code from template association_GetMany */
+  /**
+   * Get a player at a certain index
+   * @param index
+   * @return
+   */
   public Player getPlayer(int index)
   {
     Player aPlayer = players.get(index);
     return aPlayer;
   }
 
+  /**
+   * Get the list of players
+   * @return
+   */
   public List<Player> getPlayers()
   {
     List<Player> newPlayers = Collections.unmodifiableList(players);
     return newPlayers;
   }
 
+  /**
+   * Get the number of players
+   * @return
+   */
   public int numberOfPlayers()
   {
     int number = players.size();
     return number;
   }
 
+  /**
+   * Check whether there are playerss
+   * @return
+   */
   public boolean hasPlayers()
   {
     boolean has = players.size() > 0;
     return has;
   }
 
+  /**
+   * Get the index of a certain player
+   * @param aPlayer
+   * @return
+   */
   public int indexOfPlayer(Player aPlayer)
   {
     int index = players.indexOf(aPlayer);
     return index;
   }
   /* Code from template association_GetMany */
+  /**
+   * Get a card at a certain index
+   * @param index
+   * @return
+   */
   public Card getCard(int index)
   {
     Card aCard = cards.get(index);
     return aCard;
   }
 
+  /**
+   * Get the list of cards
+   * @return
+   */
   public List<Card> getCards()
   {
     List<Card> newCards = Collections.unmodifiableList(cards);
     return newCards;
   }
 
+  /**
+   * Get the number of cards
+   * @return
+   */
   public int numberOfCards()
   {
     int number = cards.size();
     return number;
   }
 
+  /**
+   * Check that there is at least one card
+   * @return
+   */
   public boolean hasCards()
   {
     boolean has = cards.size() > 0;
     return has;
   }
 
+  /**
+   * Get the index of a card
+   * @param aCard
+   * @return
+   */
   public int indexOfCard(Card aCard)
   {
     int index = cards.indexOf(aCard);
     return index;
   }
   /* Code from template association_GetOne */
+  /**
+   * Get the board
+   * @return
+   */
   public Board getBoard()
   {
     return board;
@@ -519,6 +653,11 @@ public class Game
     return 0;
   }
   /* Code from template association_AddUnidirectionalMany */
+  /**
+   * Add a player 
+   * @param aPlayer
+   * @return
+   */
   public boolean addPlayer(Player aPlayer)
   {
     boolean wasAdded = false;
@@ -528,6 +667,11 @@ public class Game
     return wasAdded;
   }
 
+  /**
+   * Remove a player 
+   * @param aPlayer
+   * @return
+   */
   public boolean removePlayer(Player aPlayer)
   {
     boolean wasRemoved = false;
@@ -539,6 +683,13 @@ public class Game
     return wasRemoved;
   }
   /* Code from template association_AddIndexControlFunctions */
+  
+  /**
+   * Add a player at a certain index
+   * @param aPlayer
+   * @param index
+   * @return
+   */
   public boolean addPlayerAt(Player aPlayer, int index)
   {  
     boolean wasAdded = false;
@@ -553,6 +704,12 @@ public class Game
     return wasAdded;
   }
 
+  /**
+   * Add or move a player to a certain index
+   * @param aPlayer
+   * @param index
+   * @return
+   */
   public boolean addOrMovePlayerAt(Player aPlayer, int index)
   {
     boolean wasAdded = false;
@@ -576,6 +733,11 @@ public class Game
     return 0;
   }
   /* Code from template association_AddUnidirectionalMany */
+  /**
+   * Add a card
+   * @param aCard
+   * @return
+   */
   public boolean addCard(Card aCard)
   {
     boolean wasAdded = false;
@@ -585,6 +747,11 @@ public class Game
     return wasAdded;
   }
 
+  /** 
+   * Remove a card
+   * @param aCard
+   * @return
+   */
   public boolean removeCard(Card aCard)
   {
     boolean wasRemoved = false;
@@ -596,6 +763,12 @@ public class Game
     return wasRemoved;
   }
   /* Code from template association_AddIndexControlFunctions */
+  /**
+   * Add a card at a certain index
+   * @param aCard
+   * @param index
+   * @return
+   */
   public boolean addCardAt(Card aCard, int index)
   {  
     boolean wasAdded = false;
@@ -610,6 +783,12 @@ public class Game
     return wasAdded;
   }
 
+  /**
+   * Add or move a card to a certain index
+   * @param aCard
+   * @param index
+   * @return
+   */
   public boolean addOrMoveCardAt(Card aCard, int index)
   {
     boolean wasAdded = false;
@@ -628,6 +807,11 @@ public class Game
     return wasAdded;
   }
   /* Code from template association_SetUnidirectionalOne */
+  /**
+   * Set the board
+   * @param aNewBoard
+   * @return
+   */
   public boolean setBoard(Board aNewBoard)
   {
     boolean wasSet = false;
@@ -639,6 +823,9 @@ public class Game
     return wasSet;
   }
 
+  /**
+   * Clear the values
+   */
   public void delete()
   {
     players.clear();
@@ -647,6 +834,10 @@ public class Game
   }
 
   // line 6 "model.ump"
+  /**
+   * Roll the Dice
+   * @return
+   */
    public int rollDice(){
 	   int dice1 = 1 + (int) (Math.random() * ((6-1) +1));
 	   int dice2 = 1 + (int) (Math.random() * ((6-1) +1));

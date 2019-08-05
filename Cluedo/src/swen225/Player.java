@@ -25,24 +25,31 @@ public class Player
   private boolean lost;
   private Cell current;
   private Room room;
+  private String initial;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Player(String aName, List<Card> aHand, boolean aLost, Cell aCurrent, Room aRoom)
+  public Player(String aName, List<Card> aHand, boolean aLost, Cell aCurrent, Room aRoom, String i)
   {
     name = aName;
     hand = aHand;
     lost = aLost;
     current = aCurrent;
     room = aRoom;
+    initial = i;
   }
 
   //------------------------
   // INTERFACE
   //------------------------
 
+  /**
+   * Set name of the player
+   * @param aName
+   * @return
+   */
   public boolean setName(String aName)
   {
     boolean wasSet = false;
@@ -51,6 +58,11 @@ public class Player
     return wasSet;
   }
 
+  /**
+   * Set the hand of the player
+   * @param aHand
+   * @return
+   */
   public boolean setHand(List<Card> aHand)
   {
     boolean wasSet = false;
@@ -59,6 +71,11 @@ public class Player
     return wasSet;
   }
   
+  /**
+   * Add card to the hand
+   * @param c
+   * @return
+   */
   public boolean addToHand(Card c) {
 	    boolean wasSet = false;
 	    hand.add(c);
@@ -67,6 +84,11 @@ public class Player
 
   }
 
+  /**
+   * Set whether the player has lost
+   * @param aLost
+   * @return
+   */
   public boolean setLost(boolean aLost)
   {
     boolean wasSet = false;
@@ -75,6 +97,11 @@ public class Player
     return wasSet;
   }
 
+  /**
+   * Set the cell that the player is in
+   * @param aCurrent
+   * @return
+   */
   public boolean setCurrent(Cell aCurrent)
   {
     boolean wasSet = false;
@@ -84,7 +111,7 @@ public class Player
 		current.setOccupier(null);
     }
 	aCurrent.setIsOccupied(true);
-	aCurrent.setOccupier(this.name);
+	aCurrent.setOccupier(this.initial);
     current = aCurrent;
     room = aCurrent.getRoom();
     if(room != null) {
@@ -94,6 +121,11 @@ public class Player
     return wasSet;
   }
 
+  /**
+   * Set the room that player is in 
+   * @param aRoom
+   * @return
+   */
   public boolean setRoom(Room aRoom)
   {
     boolean wasSet = false;
@@ -101,27 +133,62 @@ public class Player
     wasSet = true;
     return wasSet;
   }
+  
+  /**
+   * Set initials
+   */
+   public void setInitial(String i) {
+	   initial = i;
+   }
+   
+   /**
+    * Get initials
+    */
+   public String getInitial() {
+	   return initial;
+   }
 
+
+  /**
+   * Get the players name
+   * @return
+   */
   public String getName()
   {
     return name;
   }
 
+  /**
+   * Get the hand of the player
+   * @return
+   */
   public List<Card> getHand()
   {
     return hand;
   }
 
+  /**
+   * See whether the player has lost
+   * @return
+   */
   public boolean getLost()
   {
     return lost;
   }
 
+  /**
+   * Get the cell the player is in 
+   * @return
+   */
   public Cell getCurrent()
   {
     return current;
   }
 
+  /**
+   * Get the room the player is in 
+   * @return
+   */
   public Room getRoom()
   {
     return room;
@@ -136,6 +203,9 @@ public class Player
   {}
 
   // line 15 "model.ump"
+  /**
+   * Display the hand
+   */
    public void displayCards(){
 	   for(int i = 0; i<hand.size();i++) {
 		   System.out.println(hand.get(i).getName());
@@ -143,6 +213,13 @@ public class Player
   }
 
   // line 16 "model.ump"
+   /**
+    * Player selects the cards to make a suggestion
+    * @param rooms
+    * @param characters
+    * @param weapons
+    * @return
+    */
    public List<String> suggest(List<String> rooms, List<String> characters, List<String> weapons){
 	   if(!lost) {
 		   List<String> options = new ArrayList();
@@ -172,6 +249,13 @@ public class Player
   }
 
   // line 17 "model.ump"
+   /**
+    * Player selects the cards to make an accussation 
+    * @param rooms
+    * @param characters
+    * @param weapons
+    * @return
+    */
    public List<String> accuse(List<String> rooms, List<String> characters, List<String> weapons){
 	   if(!lost) {
 		   List<String> options = new ArrayList();
@@ -180,7 +264,7 @@ public class Player
 			  System.out.println(rooms);
 			  System.out.println("What room do you want?");
 			  String room = scan.next();
-			  if(rooms.contains(room)) {
+			  if(!rooms.contains(room)) {
 				  System.out.println("Please pick a room from the list");
 				  room = scan.next();
 			  }
@@ -188,7 +272,7 @@ public class Player
 			  System.out.println(characters);
 			  System.out.println("What character do you want?");
 			  String character = scan.next();
-			  if(characters.contains(character)) {
+			  if(!characters.contains(character)) {
 				  System.out.println("Please pick a character from the list");
 				  character = scan.next();
 			  }
@@ -196,7 +280,7 @@ public class Player
 			  System.out.println(weapons);
 			  System.out.println("What weapon do you want?");
 			  String weapon = scan.next();
-			  if(weapons.contains(weapon)) {
+			  if(!weapons.contains(weapon)) {
 				  System.out.println("Please pick a weapon from the list");
 				  weapon = scan.next();
 			  }
@@ -207,6 +291,11 @@ public class Player
   }
 
   // line 18 "model.ump"
+   /**
+    * Cards that refute the suggestion make
+    * @param suggest
+    * @return
+    */
    public List<String> refute(List<String> suggest){
 	   List<String> cards = new ArrayList();
 	   for(int i =0;i<hand.size();i++) {
@@ -229,78 +318,90 @@ public class Player
             "  " + "room" + "=" + (getRoom() != null ? !getRoom().equals(this)  ? getRoom().toString().replaceAll("  ","    ") : "this" : "null");
   }
 
-public void move(int moves, Board board,List<Cell> visited) {
+  /**
+   * Player moves by the number rolled
+   * @param moves
+   * @param board
+   * @param visited
+   */
+public void move(Board board,List<Cell> visited) {
 	// TODO Auto-generated method stub
-	  for(int i =0;i<moves;i++) {
+		  board.draw();
 		  String direction = getDirection();
+		  Cell next = null;
 		  if(direction.contentEquals("left")) {
 			  if(current.getX()==0) {
 				  System.out.println("Can't move this way");
-				  move(moves-i,board,visited);
+				  move(board,visited);
+				  return;
 			  }
-			  Cell next = board.getCell(current.getX()-1, current.getY());
+			  next = board.getCell(current.getX()-1, current.getY());
 			  if(visited.contains(next)) {
 				  System.out.println("You've already visited this square");
-				  move(moves-i,board,visited);
+				  move(board,visited);
+				  return;
 			  }
-			  if(!next.getAccessable()) {
+			  if(!next.getAccessable()|| next.isIsOccupied()) {
 				  System.out.println("Can't move this way");
-				  move(moves-i,board,visited);
+				  move(board,visited);
+				  return;
 			  }
-			  visited.add(next);
-			  current = next;
 		  } else if(direction.contentEquals("right")) {
 			  if(current.getX()==23) {
 				  System.out.println("Can't move this way");
-				  move(moves-i,board,visited);
+				  move(board,visited);
+				  return;
 			  }
-			  Cell next = board.getCell(current.getX()+1, current.getY());
+			  next = board.getCell(current.getX()+1, current.getY());
 			  if(visited.contains(next)) {
 				  System.out.println("You've already visited this square");
-				  move(moves-i,board,visited);
+				  move(board,visited);
+				  return;
 			  }
-			  if(!next.getAccessable()) {
+			  if(!next.getAccessable()|| next.isIsOccupied()) {
 				  System.out.println("Can't move this way");
-				  move(moves-i,board,visited);
+				  move(board,visited);
+				  return;
 			  }
-			  visited.add(next);
-			  current = next;
-		  } else if(direction.contentEquals("down")) {
+		  } else if(direction.contentEquals("up")) {
 			  if(current.getY()==0) {
 				  System.out.println("Can't move this way");
-				  move(moves-i,board,visited);
+				  move(board,visited);
+				  return;
 			  }
-			  Cell next = board.getCell(current.getX(), current.getY()-1);
+			  next = board.getCell(current.getX(), current.getY()-1);
 			  if(visited.contains(next)) {
 				  System.out.println("You've already visited this square");
-				  move(moves-i,board,visited);
+				  move(board,visited);
+				  return;
 			  }
-			  if(!next.getAccessable()) {
+			  if(!next.getAccessable()|| next.isIsOccupied()) {
 				  System.out.println("Can't move this way");
-				  move(moves-i,board,visited);
+				  move(board,visited);
+				  return;
 			  }
-			  visited.add(next);
-			  current = next;
-		  } else if(direction.contentEquals("up")) {
-			  if(current.getX()==24) {
+		  } else if(direction.contentEquals("down")) {
+			  if(current.getY()==24) {
 				  System.out.println("Can't move this way");
-				  move(moves-i,board,visited);
+				  move(board,visited);
+				  return;
 			  }
-			  Cell next = board.getCell(current.getX(), current.getY()+1);
+			  next = board.getCell(current.getX(), current.getY()+1);
 			  if(visited.contains(next)) {
 				  System.out.println("You've already visited this square");
-				  move(moves-i,board,visited);
+				  move(board,visited);
+				  return;
 			  }
-			  if(!next.getAccessable()) {
+			  if(!next.getAccessable() || next.isIsOccupied()) {
 				  System.out.println("Can't move this way");
-				  move(moves-i,board,visited);
+				  move(board,visited);
+				  return;
 			  }
-			  visited.add(next);
-			  setCurrent(next);
-			  current = next;
+			  
 		  }
-		  
-	  }
+		  visited.add(next);
+		  setCurrent(next);
+		  current = next;
 }
 
 	public String getDirection() {
@@ -314,6 +415,9 @@ public void move(int moves, Board board,List<Cell> visited) {
 		System.out.println("What directions do you want to move?");
 		  String direction = scan.next();
 		  while(!directions.contains(direction)) {
+			  if(direction.equals("display")) {
+				  displayCards();
+			  }
 			  System.out.println("Left, right, up or down");
 			  direction = scan.next();
 		  }
